@@ -9,7 +9,7 @@ interface CanvasProps {
   height?: number;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ width = 800, height = 600 }) => {
+const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
   const {
     canvasRef,
     currentColor,
@@ -25,11 +25,14 @@ const Canvas: React.FC<CanvasProps> = ({ width = 800, height = 600 }) => {
     isMessageLoading,
     handleMouseUp,
     undo,
-  } = useCanvas({ width, height });
+  } = useCanvas();
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1>Canvas</h1>
+    <div className="flex flex-col items-center justify-center gap-4 w-full h-full">
+      <h1 className="text-3xl font-bold">Canvas GPT Quiz </h1>
+      <p className="text-md text-gray-500">
+        그림을 그리면 gpt가 여러분들의 그림을 맞춰드립니다.
+      </p>
       <canvas
         ref={canvasRef}
         width={width}

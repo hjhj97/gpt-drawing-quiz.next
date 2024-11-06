@@ -3,11 +3,6 @@ import { sendMessage } from "@/app/actions/openai";
 
 type DrawingMode = "draw" | "erase";
 
-interface UseCanvasProps {
-  width: number;
-  height: number;
-}
-
 // 색상 상수 추가
 export const COLORS = {
   BLACK: "#000000",
@@ -17,7 +12,7 @@ export const COLORS = {
   YELLOW: "#FFD700",
 } as const;
 
-export const useCanvas = ({ width, height }: UseCanvasProps) => {
+export const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -26,7 +21,6 @@ export const useCanvas = ({ width, height }: UseCanvasProps) => {
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [undoStack, setUndoStack] = useState<ImageData[]>([]);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -57,6 +51,7 @@ export const useCanvas = ({ width, height }: UseCanvasProps) => {
   }, [drawingMode, currentColor, context]);
 
   const addKeyboardEvent = () => {
+    // TODO: 단축키로 누르면 undoStack 길이가 0으로 고정되는 버그 수정
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "z") {
         undo();
@@ -159,6 +154,7 @@ export const useCanvas = ({ width, height }: UseCanvasProps) => {
   };
 
   const undo = () => {
+    console.log(undoStack.length);
     if (!canvasRef.current || undoStack.length === 0) return;
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
