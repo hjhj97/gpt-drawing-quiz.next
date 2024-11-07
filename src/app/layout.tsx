@@ -1,3 +1,4 @@
+import GNB from "@/components/gnb";
 import "./globals.css";
 
 export default function RootLayout({
@@ -7,7 +8,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="w-full h-full pt-8">{children}</body>
+      <body className="w-full h-full pt-8">
+        <GNB />
+        {children}
+      </body>
     </html>
   );
 }
