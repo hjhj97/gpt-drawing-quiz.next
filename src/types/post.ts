@@ -1,5 +1,6 @@
 export interface IPost {
   id: string;
   image_url: string;
-  title: string;
+  answer: string;
+  guess: string;
 }

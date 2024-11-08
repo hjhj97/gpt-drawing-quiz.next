@@ -14,3 +14,10 @@ export const b64toBlob = (
   const blob = new Blob([byteArray], { type: contentType });
   return blob;
 };
+
+export const getBase64Image = (
+  canvasRef: React.RefObject<HTMLCanvasElement>
+) => {
+  if (!canvasRef.current) return;
+  return canvasRef.current.toDataURL("image/png");
+};

@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { sendMessage } from "@/app/actions/openai";
-import { createPost } from "@/app/actions/post";
-import { b64toBlob } from "@/utils/file";
+import { getBase64Image } from "@/utils/file";
 
 type DrawingMode = "draw" | "erase";
 
@@ -20,9 +18,8 @@ export const useCanvas = () => {
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [currentColor, setCurrentColor] = useState<string>(COLORS.BLACK);
   const [drawingMode, setDrawingMode] = useState<DrawingMode>("draw");
-  const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
   const [undoStack, setUndoStack] = useState<ImageData[]>([]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -85,11 +82,6 @@ export const useCanvas = () => {
     setDrawingMode((prev) => (prev === "draw" ? "erase" : "draw"));
   };
 
-  const getBase64Image = () => {
-    if (!canvasRef.current) return;
-    return canvasRef.current.toDataURL("image/png");
-  };
-
   const getFileName = () => {
     const date = new Date();
     return `drawing-${date.getFullYear()}${(date.getMonth() + 1)
@@ -103,28 +95,11 @@ export const useCanvas = () => {
       .padStart(2, "0")}`;
   };
 
-  const sendImage = async () => {
-    const imageData = getBase64Image();
-    if (!imageData) {
-      throw new Error("Image data is not available");
-    }
-
-    try {
-      setIsMessageLoading(true);
-      const response = await sendMessage(imageData);
-      setMessage(response || "");
-    } catch (error) {
-      alert("서버 오류가 발생했습니다." + error);
-    } finally {
-      setIsMessageLoading(false);
-    }
-  };
-
   const saveImage = () => {
     if (!canvasRef.current) return;
 
     const fileName = getFileName();
-    const imageData = getBase64Image();
+    const imageData = getBase64Image(canvasRef);
     if (!imageData) {
       throw new Error("Image data is not available");
     }
@@ -134,20 +109,11 @@ export const useCanvas = () => {
     link.click();
   };
 
-  const sendPost = async () => {
-    const b64ImageData = getBase64Image();
-    if (!b64ImageData) {
-      throw new Error("Image data is not available");
-    }
-    const blobImageData = b64toBlob(b64ImageData);
-    await createPost({ title: "test" }, blobImageData);
-  };
-
   const clearCanvas = () => {
     if (!context || !canvasRef.current) return;
 
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    setMessage("");
+    //setMessage("");
   };
 
   const saveState = () => {
@@ -190,8 +156,6 @@ export const useCanvas = () => {
   };
 
   return {
-    isMessageLoading,
-    message,
     canvasRef,
     currentColor,
     drawingMode,
@@ -200,10 +164,8 @@ export const useCanvas = () => {
     setCurrentColor,
     toggleMode,
     saveImage,
-    sendImage,
     clearCanvas,
     handleMouseUp,
     undo,
-    sendPost,
   };
 };

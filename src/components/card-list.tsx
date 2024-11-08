@@ -1,8 +1,8 @@
-import { Post } from "@/types/post";
+import { IPost } from "@/types/post";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function CardList({ posts }: { posts: Post[] }) {
+export default function CardList({ posts }: { posts: IPost[] }) {
   return (
     <div className="flex flex-wrap gap-4 mt-8 p-8">
       {posts.map((post) => (
@@ -12,7 +12,7 @@ export default function CardList({ posts }: { posts: Post[] }) {
           className="bg-white rounded-lg w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1rem)] xl:w-[calc(25%-1rem)]"
         >
           <div className="p-4 flex flex-col gap-4 items-center justify-between aspect-square">
-            <p className="text-lg font-bold">문제 : {post.title}</p>
+            <p className="text-lg font-bold">문제 : {post.answer}</p>
             <div className="relative w-full h-[80%]">
               <Image
                 src={post.image_url}
@@ -21,7 +21,7 @@ export default function CardList({ posts }: { posts: Post[] }) {
                 className="object-cover rounded-lg border-2 border-gray-300"
               />
             </div>
-            <p className="text-lg font-bold">GPT : {post.title}</p>
+            <p className="text-lg font-bold">GPT : {post.guess}</p>
           </div>
         </Link>
       ))}

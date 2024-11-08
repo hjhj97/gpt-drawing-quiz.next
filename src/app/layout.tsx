@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="w-full h-full pt-8">
+      <body className="w-full h-full pt-8 bg-blue-400">
         <GNB />
         {children}
       </body>

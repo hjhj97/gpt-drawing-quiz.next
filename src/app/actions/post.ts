@@ -26,7 +26,7 @@ export const createPost = async (
   imageFile: Blob
 ): Promise<IPost | null> => {
   const client = await createClient();
-  const imageName = `${Date.now()}-${post.title}.png`;
+  const imageName = `${Date.now()}-${post.answer}.png`;
 
   const { error: imageError } = await client.storage
     .from("images")
