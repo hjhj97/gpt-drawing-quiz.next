@@ -25,6 +25,7 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
     isMessageLoading,
     handleMouseUp,
     undo,
+    sendPost,
   } = useCanvas();
 
   return (
@@ -38,7 +39,7 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
         width={width}
         height={height}
         className={`
-          border border-gray-300 rounded-lg
+          border border-gray-300 rounded-lg bg-white
           ${drawingMode === "erase" ? "cursor-cell" : "cursor-crosshair"}
         `}
         onMouseDown={startDrawing}
@@ -57,7 +58,11 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
         clearCanvas={clearCanvas}
         undo={undo}
       />
-      <CanvasBottomText message={message} isMessageLoading={isMessageLoading} />
+      <CanvasBottomText
+        message={message}
+        isMessageLoading={isMessageLoading}
+        sendPost={sendPost}
+      />
     </div>
   );
 };

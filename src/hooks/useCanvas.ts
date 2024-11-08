@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { sendMessage } from "@/app/actions/openai";
+import { createPost } from "@/app/actions/post";
+import { b64toBlob } from "@/utils/file";
 
 type DrawingMode = "draw" | "erase";
 
@@ -110,7 +112,7 @@ export const useCanvas = () => {
     try {
       setIsMessageLoading(true);
       const response = await sendMessage(imageData);
-      setMessage(response);
+      setMessage(response || "");
     } catch (error) {
       alert("서버 오류가 발생했습니다." + error);
     } finally {
@@ -130,6 +132,15 @@ export const useCanvas = () => {
     link.download = `${fileName}.png`;
     link.href = imageData;
     link.click();
+  };
+
+  const sendPost = async () => {
+    const b64ImageData = getBase64Image();
+    if (!b64ImageData) {
+      throw new Error("Image data is not available");
+    }
+    const blobImageData = b64toBlob(b64ImageData);
+    await createPost({ title: "test" }, blobImageData);
   };
 
   const clearCanvas = () => {
@@ -154,7 +165,6 @@ export const useCanvas = () => {
   };
 
   const undo = () => {
-    console.log(undoStack.length);
     if (!canvasRef.current || undoStack.length === 0) return;
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
@@ -194,5 +204,6 @@ export const useCanvas = () => {
     clearCanvas,
     handleMouseUp,
     undo,
+    sendPost,
   };
 };
