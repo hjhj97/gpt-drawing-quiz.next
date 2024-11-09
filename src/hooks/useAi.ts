@@ -1,5 +1,6 @@
 import { sendMessage } from "@/app/actions/openai";
 import { createPost } from "@/app/actions/post";
+import { getRandomWord } from "@/app/actions/words";
 import { b64toBlob, getBase64Image } from "@/utils/file";
 import { useState } from "react";
 
@@ -8,6 +9,7 @@ export const useAi = ({
 }: {
   canvasRef: React.RefObject<HTMLCanvasElement>;
 }) => {
+  const [word, setWord] = useState<string>(() => getRandomWord());
   const [message, setMessage] = useState<string>("");
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
 
@@ -34,8 +36,19 @@ export const useAi = ({
       throw new Error("Image data is not available");
     }
     const blobImageData = b64toBlob(b64ImageData);
-    await createPost({ answer: "test", guess: message }, blobImageData);
+    await createPost({ answer: word, guess: message }, blobImageData);
   };
 
-  return { message, isMessageLoading, sendImage, sendPost };
+  const setRandomWord = () => {
+    setWord(getRandomWord());
+  };
+
+  return {
+    message,
+    isMessageLoading,
+    sendImage,
+    sendPost,
+    word,
+    setRandomWord,
+  };
 };

@@ -11,7 +11,7 @@ export default function CardList({ posts }: { posts: IPost[] }) {
           href={`/posts/${post.id}`}
           className="bg-white rounded-lg w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1rem)] xl:w-[calc(25%-1rem)]"
         >
-          <div className="p-4 flex flex-col gap-4 items-center justify-between aspect-square">
+          <div className="p-4 flex flex-col gap-4 items-center  aspect-square">
             <p className="text-lg font-bold">문제 : {post.answer}</p>
             <div className="relative w-full h-[80%]">
               <Image
@@ -21,7 +21,9 @@ export default function CardList({ posts }: { posts: IPost[] }) {
                 className="object-cover rounded-lg border-2 border-gray-300"
               />
             </div>
-            <p className="text-lg font-bold">GPT : {post.guess}</p>
+            {post.guess && (
+              <p className="text-lg font-bold">GPT : {post.guess}</p>
+            )}
           </div>
         </Link>
       ))}

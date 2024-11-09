@@ -24,7 +24,7 @@ export default function CanvasBottomText({
         onClick={sendPost}
         className="mt-8 bg-red-300 text-white px-4 py-2 rounded-md"
       >
-        게시판에 자랑하기
+        박물관에 업로드하기
       </button>
     </div>
   );

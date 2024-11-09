@@ -3,7 +3,6 @@
 import { IPost } from "@/types/post";
 import { b64toBlob } from "@/utils/file";
 import { createClient } from "@/utils/supabase/server";
-import { decode } from "base64-arraybuffer";
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
   const client = await createClient();

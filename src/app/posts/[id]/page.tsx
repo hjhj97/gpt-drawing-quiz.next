@@ -8,7 +8,7 @@ export default async function Post({ params }: any) {
   if (!post) return <div>Post not found</div>;
   return (
     <div>
-      <h1>{post.title}</h1>
+      <h1>{post.answer}</h1>
       <Image src={post.image_url} alt="post" width={400} height={400} />
     </div>
   );

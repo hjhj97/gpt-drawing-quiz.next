@@ -3,7 +3,6 @@
 import { useCanvas } from "@/hooks/useCanvas";
 import CanvasController from "@/components/canvas-controller";
 import CanvasBottomText from "@/components/canvas-bottom-text";
-import { getRandomWord } from "@/app/actions/words";
 import { useAi } from "@/hooks/useAi";
 import CanvasTopText from "./canvas-top-text";
 
@@ -27,7 +26,14 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
     undo,
   } = useCanvas();
 
-  const { message, isMessageLoading, sendImage, sendPost } = useAi({
+  const {
+    message,
+    isMessageLoading,
+    sendImage,
+    sendPost,
+    word,
+    setRandomWord,
+  } = useAi({
     canvasRef,
   });
 
@@ -39,7 +45,7 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
           그림을 그리면 gpt가 여러분들의 그림을 맞춰드립니다.
         </p>
       </div>
-      <CanvasTopText />
+      <CanvasTopText word={word} setRandomWord={setRandomWord} />
       <canvas
         ref={canvasRef}
         width={width}
