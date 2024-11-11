@@ -2,16 +2,20 @@ import { sendMessage } from "@/app/actions/openai";
 import { createPost } from "@/app/actions/post";
 import { getRandomWord } from "@/app/actions/words";
 import { b64toBlob, getBase64Image } from "@/utils/file";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useAi = ({
   canvasRef,
 }: {
   canvasRef: React.RefObject<HTMLCanvasElement>;
 }) => {
-  const [word, setWord] = useState<string>(() => getRandomWord());
+  const [word, setWord] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setRandomWord();
+  }, []);
 
   const sendImage = async () => {
     const imageData = getBase64Image(canvasRef);
@@ -39,8 +43,9 @@ export const useAi = ({
     await createPost({ answer: word, guess: message }, blobImageData);
   };
 
-  const setRandomWord = () => {
-    setWord(getRandomWord());
+  const setRandomWord = async () => {
+    const newWord = await getRandomWord();
+    setWord(newWord);
   };
 
   return {

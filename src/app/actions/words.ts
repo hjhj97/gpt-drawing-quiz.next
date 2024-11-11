@@ -1,8 +1,9 @@
-export const getRandomWord = () => {
+"use server";
+export const getRandomWord = async () => {
   return WORDS[Math.floor(Math.random() * WORDS.length)];
 };
 
-export const WORDS = [
+const WORDS = [
   "apple",
   "book",
   "cat",
