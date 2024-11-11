@@ -1,8 +1,12 @@
-import { IPost } from "@/types/post";
+import { getAllPosts } from "@/app/actions/post";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function CardList({ posts }: { posts: IPost[] }) {
+export default async function CardList() {
+  const posts = await getAllPosts();
+
+  if (!posts || posts.length === 0) return <div>No posts</div>;
+
   return (
     <div className="flex flex-wrap gap-4 mt-8 p-8">
       {posts.map((post) => (
