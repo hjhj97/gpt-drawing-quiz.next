@@ -1,5 +1,6 @@
 import React from "react";
 import { COLORS } from "../hooks/useCanvas";
+import { createClient } from "@/utils/supabase/client";
 
 interface ColorButtonProps {
   color: string;
@@ -55,7 +56,7 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
       <div className="flex items-center gap-2">
         <span className="mr-2">색상:</span>
         <div className="flex gap-2">
-          {Object.entries(COLORS).map(([name, color]) => (
+          {Object.entries(COLORS).map(([_, color]) => (
             <ColorButton
               key={color}
               color={color}
@@ -96,18 +97,18 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
       </button>
 
       <button
+        onClick={undo}
+        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors"
+      >
+        ↩ 실행 취소
+      </button>
+
+      <button
         onClick={sendImage}
         disabled={isMessageLoading}
         className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors"
       >
         {isMessageLoading ? "전송중..." : "GPT에 이미지 전송"}
-      </button>
-
-      <button
-        onClick={undo}
-        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors"
-      >
-        ↩ 실행 취소
       </button>
     </div>
   );

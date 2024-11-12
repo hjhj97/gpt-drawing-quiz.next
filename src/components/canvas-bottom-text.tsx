@@ -1,3 +1,5 @@
+import { useGoogleSession } from "@/context/google-session-context";
+
 export default function CanvasBottomText({
   message,
   isMessageLoading,
@@ -7,6 +9,9 @@ export default function CanvasBottomText({
   isMessageLoading: boolean;
   sendPost: () => void;
 }) {
+  const { session } = useGoogleSession();
+  console.log(session);
+
   return (
     <div>
       <p>오직 영어로만 답변이 가능합니다</p>
@@ -20,12 +25,14 @@ export default function CanvasBottomText({
         </div>
       ) : null}
 
-      <button
-        onClick={sendPost}
-        className="mt-8 bg-red-300 text-white px-4 py-2 rounded-md"
-      >
-        박물관에 업로드하기
-      </button>
+      {session && (
+        <button
+          onClick={sendPost}
+          className="mt-8 bg-red-300 text-white px-4 py-2 rounded-md"
+        >
+          박물관에 업로드하기
+        </button>
+      )}
     </div>
   );
 }
