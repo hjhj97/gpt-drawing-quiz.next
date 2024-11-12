@@ -10,7 +10,6 @@ export default function CanvasBottomText({
   sendPost: () => void;
 }) {
   const { session } = useGoogleSession();
-  console.log(session);
 
   return (
     <div>

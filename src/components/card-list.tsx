@@ -4,7 +4,6 @@ import Link from "next/link";
 
 export default async function CardList() {
   const posts = await getAllPosts();
-
   if (!posts || posts.length === 0) return <div>No posts</div>;
 
   return (

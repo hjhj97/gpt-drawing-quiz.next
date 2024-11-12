@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type GoogleSessionContextType = {
   session: Session | null;
+  isLoading: boolean;
 };
 
 const GoogleSessionContext = createContext<
@@ -26,19 +27,22 @@ export function GoogleSessionProvider({
   children: React.ReactNode;
 }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const client = createClient();
+
     const {
       data: { subscription },
     } = client.auth.onAuthStateChange((event, session) => {
       setSession(session);
+      setIsLoading(false);
     });
     return () => subscription.unsubscribe();
   }, []);
 
   return (
-    <GoogleSessionContext.Provider value={{ session }}>
+    <GoogleSessionContext.Provider value={{ session, isLoading }}>
       {children}
     </GoogleSessionContext.Provider>
   );
