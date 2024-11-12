@@ -1,6 +1,7 @@
 import React from "react";
 import { COLORS } from "../hooks/useCanvas";
 import { createClient } from "@/utils/supabase/client";
+import { useGoogleSession } from "@/context/google-session-context";
 
 interface ColorButtonProps {
   color: string;
@@ -51,6 +52,7 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
   isMessageLoading,
   undo,
 }) => {
+  const { session } = useGoogleSession();
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
@@ -105,8 +107,8 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
 
       <button
         onClick={sendImage}
-        disabled={isMessageLoading}
-        className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors"
+        disabled={isMessageLoading || !session}
+        className="px-4 py-2 bg-purple-500 disabled:opacity-50 text-white rounded-md transition-colors"
       >
         {isMessageLoading ? "전송중..." : "GPT에 이미지 전송"}
       </button>

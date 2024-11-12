@@ -38,14 +38,9 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 w-full h-full">
-      <div>
-        <h1 className="text-3xl font-bold">Canvas GPT Quiz </h1>
-        <p className="text-md text-gray-500">
-          그림을 그리면 gpt가 여러분들의 그림을 맞춰드립니다.
-        </p>
-      </div>
+    <div className="flex flex-col items-center justify-center gap-4 w-full h-full pt-8">
       <CanvasTopText word={word} setRandomWord={setRandomWord} />
+
       <canvas
         ref={canvasRef}
         width={width}
