@@ -1,7 +1,17 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { getBase64Image } from "@/utils/file";
 
 type DrawingMode = "draw" | "erase";
+
+const MOUSE_CLICK = {
+  LEFT: 0,
+  RIGHT: 2,
+} as const;
+
+const LINE_WIDTH = {
+  THIN: 2,
+  THICK: 15,
+} as const;
 
 // 색상 상수 추가
 export const COLORS = {
@@ -19,6 +29,7 @@ export const useCanvas = () => {
   const [currentColor, setCurrentColor] = useState<string>(COLORS.BLACK);
   const [drawingMode, setDrawingMode] = useState<DrawingMode>("draw");
   const [undoStack, setUndoStack] = useState<ImageData[]>([]);
+  const [lineWidth, setLineWidth] = useState<number>(2);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -28,10 +39,10 @@ export const useCanvas = () => {
     if (!ctx) return;
 
     ctx.strokeStyle = currentColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = lineWidth;
     ctx.lineCap = "round";
     setContext(ctx);
-  }, []);
+  }, [lineWidth, currentColor]);
 
   useEffect(() => {
     addKeyboardEvent();
@@ -48,6 +59,41 @@ export const useCanvas = () => {
       context.strokeStyle = currentColor;
     }
   }, [drawingMode, currentColor, context]);
+
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      e.preventDefault();
+    },
+    []
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>): void => {
+      if (e.button === MOUSE_CLICK.RIGHT) {
+        // 우클릭
+        setLineWidth(LINE_WIDTH.THICK);
+      } else {
+        // 좌클릭
+        setLineWidth(LINE_WIDTH.THIN);
+      }
+      startDrawing(e);
+    },
+    []
+  );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener("mousedown", handleMouseDown);
+      canvas.addEventListener("contextmenu", handleContextMenu);
+    }
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener("mousedown", handleMouseDown);
+        canvas.removeEventListener("contextmenu", handleContextMenu);
+      }
+    };
+  }, [canvasRef, handleMouseDown, handleContextMenu]);
 
   const addKeyboardEvent = () => {
     // TODO: 단축키로 누르면 undoStack 길이가 0으로 고정되는 버그 수정
@@ -111,9 +157,7 @@ export const useCanvas = () => {
 
   const clearCanvas = () => {
     if (!context || !canvasRef.current) return;
-
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //setMessage("");
   };
 
   const saveState = () => {
@@ -153,6 +197,7 @@ export const useCanvas = () => {
       saveState();
     }
     setIsDrawing(false);
+    setLineWidth(LINE_WIDTH.THIN);
   };
 
   return {
@@ -167,5 +212,6 @@ export const useCanvas = () => {
     clearCanvas,
     handleMouseUp,
     undo,
+    handleContextMenu,
   };
 };
