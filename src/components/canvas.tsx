@@ -60,12 +60,12 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
         setCurrentColor={setCurrentColor}
         toggleMode={toggleMode}
         saveImage={saveImage}
-        sendImage={sendImage}
         isMessageLoading={isMessageLoading}
         clearCanvas={clearCanvas}
         undo={undo}
       />
       <CanvasBottomText
+        sendImage={sendImage}
         message={message}
         isMessageLoading={isMessageLoading}
         sendPost={sendPost}
