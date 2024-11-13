@@ -3,4 +3,5 @@ export interface IPost {
   image_url: string;
   answer: string;
   guess?: string;
+  created_at: string;
 }
