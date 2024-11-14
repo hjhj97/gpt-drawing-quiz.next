@@ -1,7 +1,6 @@
 "use server";
 
 import { IPost } from "@/types/post";
-import { b64toBlob } from "@/utils/file";
 import { createClient } from "@/utils/supabase/server";
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
@@ -21,7 +20,7 @@ export const getPostById = async (id: number): Promise<IPost | null> => {
   return post;
 };
 export const createPost = async (
-  post: Omit<IPost, "id" | "image_url">,
+  post: Omit<IPost, "id" | "image_url" | "created_at">,
   imageFile: Blob
 ): Promise<IPost | null> => {
   const client = await createClient();

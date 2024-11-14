@@ -2,7 +2,7 @@ import { sendMessage } from "@/app/actions/openai";
 import { createPost } from "@/app/actions/post";
 import { getRandomWord } from "@/app/actions/words";
 import { b64toBlob, getBase64Image } from "@/utils/file";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const useAi = ({
   canvasRef,
@@ -34,13 +34,22 @@ export const useAi = ({
     }
   };
 
+  const isCorrect = useMemo(() => {
+    const splitedMessage = message.split(" ");
+    const isCorrect = splitedMessage.includes(word);
+    return isCorrect;
+  }, [message, word]);
+
   const sendPost = async () => {
     const b64ImageData = getBase64Image(canvasRef);
     if (!b64ImageData) {
       throw new Error("Image data is not available");
     }
     const blobImageData = b64toBlob(b64ImageData);
-    await createPost({ answer: word, guess: message }, blobImageData);
+    await createPost(
+      { answer: word, guess: message, is_correct: isCorrect },
+      blobImageData
+    );
   };
 
   const setRandomWord = async () => {
@@ -55,5 +64,6 @@ export const useAi = ({
     sendPost,
     word,
     setRandomWord,
+    isCorrect,
   };
 };
