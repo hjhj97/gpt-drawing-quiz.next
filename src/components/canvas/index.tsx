@@ -1,8 +1,8 @@
 "use client";
 
 import { useCanvas } from "@/hooks/useCanvas";
-import CanvasController from "@/components/canvas-controller";
-import CanvasBottomText from "@/components/canvas-bottom-text";
+import CanvasController from "./canvas-controller";
+import CanvasBottomText from "./canvas-bottom-text";
 import { useAi } from "@/hooks/useAi";
 import CanvasTopText from "./canvas-top-text";
 
@@ -37,6 +37,10 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
     canvasRef,
   });
 
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    startDrawing(e.nativeEvent);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full h-full pt-8">
       <CanvasTopText word={word} setAnswerWord={setAnswerWord} />
@@ -49,7 +53,7 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
           border border-gray-300 rounded-lg bg-white
           ${drawingMode === "erase" ? "cursor-cell" : "cursor-crosshair"}
         `}
-        onMouseDown={startDrawing}
+        onMouseDown={handleMouseDown}
         onMouseMove={draw}
         onMouseUp={handleMouseUp}
         onMouseOut={handleMouseUp}

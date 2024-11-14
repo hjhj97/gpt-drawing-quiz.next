@@ -60,26 +60,20 @@ export const useCanvas = () => {
     }
   }, [drawingMode, currentColor, context]);
 
-  const handleContextMenu = useCallback(
-    (e: React.MouseEvent<HTMLCanvasElement>) => {
-      e.preventDefault();
-    },
-    []
-  );
+  const handleContextMenu = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+  }, []);
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLCanvasElement>): void => {
-      if (e.button === MOUSE_CLICK.RIGHT) {
-        // 우클릭
-        setLineWidth(LINE_WIDTH.THICK);
-      } else {
-        // 좌클릭
-        setLineWidth(LINE_WIDTH.THIN);
-      }
-      startDrawing(e);
-    },
-    []
-  );
+  const handleMouseDown = useCallback((e: MouseEvent) => {
+    if (e.button === MOUSE_CLICK.RIGHT) {
+      // 우클릭
+      setLineWidth(LINE_WIDTH.THICK);
+    } else {
+      // 좌클릭
+      setLineWidth(LINE_WIDTH.THIN);
+    }
+    startDrawing(e);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -107,10 +101,13 @@ export const useCanvas = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>): void => {
-    if (!context) return;
+  const startDrawing = (e: MouseEvent): void => {
+    if (!context || !canvasRef.current) return;
 
-    const { offsetX, offsetY } = e.nativeEvent;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
     context.beginPath();
     context.moveTo(offsetX, offsetY);
     setIsDrawing(true);

@@ -1,4 +1,4 @@
-import RandomWord from "./random-word";
+import RandomWord from "@/components/random-word";
 
 type CanvasTopTextProps = {
   word: string;

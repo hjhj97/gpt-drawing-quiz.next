@@ -1,6 +1,5 @@
 import React from "react";
-import { COLORS } from "../hooks/useCanvas";
-import { useGoogleSession } from "@/context/google-session-context";
+import { COLORS } from "@/hooks/useCanvas";
 
 interface ColorButtonProps {
   color: string;
