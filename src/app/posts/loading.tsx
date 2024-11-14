@@ -5,7 +5,7 @@ export default function Loading() {
     (_, index) => index + 1
   );
   return (
-    <div className="flex flex-wrap gap-8 mt-8 p-8">
+    <div className="flex flex-wrap gap-8 mt-8 p-8 max-w-[1200px] mx-auto">
       {loadingCards.map((item) => (
         <LoadingCard key={item} />
       ))}
@@ -15,7 +15,7 @@ export default function Loading() {
 
 function LoadingCard() {
   return (
-    <div className="bg-white rounded-lg w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.33%-2rem)] xl:w-[calc(25%-2rem)]">
+    <div className="bg-white rounded-lg w-full sm:w-[calc(50%-2rem)]">
       <div className="p-4 flex flex-col gap-4 items-center aspect-square">
         <div className="w-32 h-6 bg-gray-200 rounded animate-pulse" />
         <div className="relative w-full h-[80%] bg-gray-200 rounded animate-pulse" />

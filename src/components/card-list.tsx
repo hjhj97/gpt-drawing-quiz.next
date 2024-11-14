@@ -7,7 +7,7 @@ export default async function CardList() {
   if (!posts || posts.length === 0) return <div>No posts</div>;
 
   return (
-    <div className="flex flex-col gap-8 mt-16 p-8">
+    <div className="flex flex-col gap-8 mt-16 p-8 max-w-[1200px] mx-auto">
       <div>
         <p className="text-lg font-bold">
           총 {posts.length}개의 작품이 전시되어 있습니다
@@ -19,7 +19,7 @@ export default async function CardList() {
           <Link
             key={post.id}
             href={`/posts/${post.id}`}
-            className="bg-white rounded-lg w-full sm:w-[calc(50%-2rem)] lg:w-[calc(33.33%-2rem)] xl:w-[calc(25%-2rem)]"
+            className="bg-white rounded-lg w-full sm:w-[calc(50%-2rem)]"
           >
             <div className="p-4 flex flex-col gap-4 items-center  aspect-square">
               <p className="text-lg font-bold">문제 : {post.answer}</p>
