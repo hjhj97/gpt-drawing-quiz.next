@@ -32,14 +32,14 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
     sendImage,
     sendPost,
     word,
-    setRandomWord,
+    setAnswerWord,
   } = useAi({
     canvasRef,
   });
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 w-full h-full pt-8">
-      <CanvasTopText word={word} setRandomWord={setRandomWord} />
+      <CanvasTopText word={word} setAnswerWord={setAnswerWord} />
 
       <canvas
         ref={canvasRef}
@@ -60,7 +60,6 @@ const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
         setCurrentColor={setCurrentColor}
         toggleMode={toggleMode}
         saveImage={saveImage}
-        isMessageLoading={isMessageLoading}
         clearCanvas={clearCanvas}
         undo={undo}
       />

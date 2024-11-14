@@ -2,12 +2,12 @@ import RandomWord from "./random-word";
 
 type CanvasTopTextProps = {
   word: string;
-  setRandomWord: () => void;
+  setAnswerWord: (customWord?: string) => void;
 };
 
 export default function CanvasTopText({
   word,
-  setRandomWord,
+  setAnswerWord,
 }: CanvasTopTextProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 ">
@@ -18,7 +18,7 @@ export default function CanvasTopText({
         </p>
       </div>
       {word ? (
-        <RandomWord word={word} setRandomWord={setRandomWord} />
+        <RandomWord word={word} setAnswerWord={setAnswerWord} />
       ) : (
         <div className="h-[36px]">단어 불러오는 중...</div>
       )}

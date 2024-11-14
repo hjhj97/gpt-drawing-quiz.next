@@ -14,7 +14,7 @@ export const useAi = ({
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setRandomWord();
+    setAnswerWord();
   }, []);
 
   const sendImage = async () => {
@@ -52,9 +52,13 @@ export const useAi = ({
     );
   };
 
-  const setRandomWord = async () => {
-    const newWord = await getRandomWord();
-    setWord(newWord);
+  const setAnswerWord = async (customWord?: string) => {
+    if (!customWord) {
+      const newWord = await getRandomWord();
+      setWord(newWord);
+    } else {
+      setWord(customWord || "");
+    }
   };
 
   return {
@@ -63,7 +67,7 @@ export const useAi = ({
     sendImage,
     sendPost,
     word,
-    setRandomWord,
+    setAnswerWord,
     isCorrect,
   };
 };
