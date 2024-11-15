@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { getBase64Image } from "@/utils/file";
 
 type DrawingMode = "draw" | "erase";
 
@@ -140,16 +139,14 @@ export const useCanvas = () => {
 
   const saveImage = () => {
     if (!canvasRef.current) return;
-
-    const fileName = getFileName();
-    const imageData = getBase64Image(canvasRef);
-    if (!imageData) {
-      throw new Error("Image data is not available");
-    }
-    const link = document.createElement("a");
-    link.download = `${fileName}.png`;
-    link.href = imageData;
-    link.click();
+    canvasRef.current.toBlob((blob) => {
+      if (!blob) return;
+      const link = document.createElement("a");
+      const fileName = getFileName();
+      link.download = `${fileName}.png`;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    });
   };
 
   const clearCanvas = () => {

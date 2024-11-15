@@ -1,7 +1,7 @@
 import { sendMessage } from "@/app/actions/openai";
 import { createPost } from "@/app/actions/post";
 import { getRandomWord } from "@/app/actions/words";
-import { b64toBlob, getBase64Image } from "@/utils/file";
+import { getBase64Image } from "@/utils/file";
 import { useEffect, useMemo, useState } from "react";
 
 export const useAi = ({
@@ -41,15 +41,16 @@ export const useAi = ({
   }, [message, word]);
 
   const sendPost = async () => {
-    const b64ImageData = getBase64Image(canvasRef);
-    if (!b64ImageData) {
-      throw new Error("Image data is not available");
+    if (!canvasRef.current) {
+      throw new Error("캔버스가 존재하지 않습니다.");
     }
-    const blobImageData = b64toBlob(b64ImageData);
-    await createPost(
-      { answer: word, guess: message, is_correct: isCorrect },
-      blobImageData
-    );
+    canvasRef.current.toBlob(async (blob) => {
+      if (!blob) throw new Error("이미지 형식이 올바르지 않습니다.");
+      await createPost(
+        { answer: word, guess: message, is_correct: isCorrect },
+        blob
+      );
+    });
   };
 
   const setAnswerWord = async (customWord?: string) => {
