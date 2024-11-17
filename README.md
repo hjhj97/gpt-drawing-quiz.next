@@ -48,3 +48,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=ey....
 6. Supabase Storage 에 이미지 업로드
 
 ![Canvas-gpt-quiz)](https://github.com/user-attachments/assets/5afb70a7-8181-438a-96a8-b1e6bab2a3ed)
+
+## 데모
+
+![demo-1](./demo/demo.gif)
