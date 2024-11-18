@@ -7,6 +7,7 @@ export default function Navigator() {
   const pathArray = [
     { path: "/", name: "캔버스" },
     { path: "/posts", name: "박물관" },
+    { path: "/quiz", name: "퀴즈" },
   ];
   return (
     <div className="w-full max-w-7xl mx-auto px-4">

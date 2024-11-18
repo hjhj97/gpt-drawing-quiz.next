@@ -1,6 +1,7 @@
 "use server";
 
 import { IPost } from "@/types/post";
+import { getFileName } from "@/utils/file";
 import { createClient } from "@/utils/supabase/server";
 
 export const getAllPosts = async (): Promise<IPost[] | null> => {
@@ -24,16 +25,10 @@ export const createPost = async (
   imageFile: Blob
 ): Promise<IPost | null> => {
   const client = await createClient();
-  const imageName = `${Date.now()}-${post.answer}.png`;
+  const fileName = getFileName();
+  const imageName = `${fileName}-${post.answer}.png`;
 
-  const { error: imageError } = await client.storage
-    .from("images")
-    .upload(imageName, imageFile, { contentType: "image/png" });
-
-  if (imageError) {
-    console.error(imageError);
-    throw new Error("이미지 업로드 중 에러가 발생했습니다.");
-  }
+  await uploadImage(imageFile, imageName);
 
   const {
     data: { publicUrl },
@@ -47,4 +42,15 @@ export const createPost = async (
     });
   if (postError) throw new Error(postError.message);
   return postData;
+};
+export const uploadImage = async (imageFile: Blob, imageName: string) => {
+  const client = await createClient();
+  const { error: imageError } = await client.storage
+    .from("images")
+    .upload(imageName, imageFile, { contentType: "image/png" });
+
+  if (imageError) {
+    console.error(imageError);
+    throw new Error("이미지 업로드 중 에러가 발생했습니다.");
+  }
 };

@@ -1,6 +1,6 @@
 "use server";
-import OpenAI from "openai";
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+import { client } from "./config";
 
 export const sendMessage = async (imageData: string) => {
   const chatCompletion = await client.chat.completions.create({
