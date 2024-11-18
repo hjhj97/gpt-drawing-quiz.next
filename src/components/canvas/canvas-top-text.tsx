@@ -1,14 +1,12 @@
 import RandomWord from "@/components/random-word";
+import { memo } from "react";
 
 type CanvasTopTextProps = {
   word: string;
   setAnswerWord: (customWord?: string) => void;
 };
 
-export default function CanvasTopText({
-  word,
-  setAnswerWord,
-}: CanvasTopTextProps) {
+function CanvasTopText({ word, setAnswerWord }: CanvasTopTextProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 ">
       <div className="flex flex-col items-center justify-center gap-2 ">
@@ -25,3 +23,5 @@ export default function CanvasTopText({
     </div>
   );
 }
+
+export default memo(CanvasTopText);

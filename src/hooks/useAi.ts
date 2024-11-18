@@ -2,7 +2,7 @@ import { sendMessage } from "@/app/actions/openai";
 import { createPost } from "@/app/actions/post";
 import { getRandomWord } from "@/app/actions/words";
 import { getBase64Image } from "@/utils/file";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 
 export const useAi = ({
   canvasRef,
@@ -13,11 +13,20 @@ export const useAi = ({
   const [message, setMessage] = useState<string>("");
   const [isMessageLoading, setIsMessageLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    setAnswerWord();
+  const setAnswerWord = useCallback(async (customWord?: string) => {
+    if (!customWord) {
+      const newWord = await getRandomWord();
+      setWord(newWord);
+    } else {
+      setWord(customWord || "");
+    }
   }, []);
 
-  const sendImage = async () => {
+  useEffect(() => {
+    setAnswerWord();
+  }, [setAnswerWord]);
+
+  const sendImage = useCallback(async () => {
     const imageData = getBase64Image(canvasRef);
     if (!imageData) {
       throw new Error("Image data is not available");
@@ -32,7 +41,7 @@ export const useAi = ({
     } finally {
       setIsMessageLoading(false);
     }
-  };
+  }, [canvasRef]);
 
   const isCorrect = useMemo(() => {
     const splitedMessage = message.split(" ");
@@ -40,7 +49,7 @@ export const useAi = ({
     return isCorrect;
   }, [message, word]);
 
-  const sendPost = async () => {
+  const sendPost = useCallback(async () => {
     if (!canvasRef.current) {
       throw new Error("캔버스가 존재하지 않습니다.");
     }
@@ -51,16 +60,7 @@ export const useAi = ({
         blob
       );
     });
-  };
-
-  const setAnswerWord = async (customWord?: string) => {
-    if (!customWord) {
-      const newWord = await getRandomWord();
-      setWord(newWord);
-    } else {
-      setWord(customWord || "");
-    }
-  };
+  }, [canvasRef, word, message, isCorrect]);
 
   return {
     message,

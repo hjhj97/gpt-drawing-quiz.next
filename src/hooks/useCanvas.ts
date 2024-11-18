@@ -1,6 +1,12 @@
+import { downloadImageAsBlob, getFileName } from "@/utils/file";
 import { useRef, useState, useEffect, useCallback } from "react";
 
-type DrawingMode = "draw" | "erase";
+export const MODE = {
+  DRAW: "draw",
+  ERASE: "erase",
+} as const;
+
+export type DrawingMode = (typeof MODE)[keyof typeof MODE];
 
 const MOUSE_CLICK = {
   LEFT: 0,
@@ -12,7 +18,6 @@ const LINE_WIDTH = {
   THICK: 15,
 } as const;
 
-// 색상 상수 추가
 export const COLORS = {
   BLACK: "#000000",
   RED: "#FF0000",
@@ -43,9 +48,54 @@ export const useCanvas = () => {
     setContext(ctx);
   }, [lineWidth, currentColor]);
 
+  const startDrawing = useCallback(
+    (e: MouseEvent): void => {
+      if (!context || !canvasRef.current) return;
+
+      const rect = canvasRef.current.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+
+      context.beginPath();
+      context.moveTo(offsetX, offsetY);
+      setIsDrawing(true);
+    },
+    [context, canvasRef]
+  );
+
+  const undo = useCallback(() => {
+    if (!canvasRef.current || undoStack.length === 0) return;
+    const ctx = canvasRef.current.getContext("2d");
+    if (!ctx) return;
+
+    const newStack = [...undoStack];
+    newStack.pop();
+    const lastState = newStack[newStack.length - 1];
+
+    if (lastState) {
+      ctx.putImageData(lastState, 0, 0);
+      setUndoStack(newStack);
+    } else {
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      setUndoStack([]);
+    }
+  }, [canvasRef, undoStack]);
+
+  const addKeyboardEvent = useCallback(() => {
+    // TODO: 단축키로 누르면 undoStack 길이가 0으로 고정되는 버그 수정
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        undo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo]);
+
   useEffect(() => {
     addKeyboardEvent();
-  }, []);
+  }, [addKeyboardEvent]);
 
   useEffect(() => {
     if (!context) return;
@@ -63,16 +113,19 @@ export const useCanvas = () => {
     e.preventDefault();
   }, []);
 
-  const handleMouseDown = useCallback((e: MouseEvent) => {
-    if (e.button === MOUSE_CLICK.RIGHT) {
-      // 우클릭
-      setLineWidth(LINE_WIDTH.THICK);
-    } else {
-      // 좌클릭
-      setLineWidth(LINE_WIDTH.THIN);
-    }
-    startDrawing(e);
-  }, []);
+  const handleMouseDown = useCallback(
+    (e: MouseEvent) => {
+      if (e.button === MOUSE_CLICK.RIGHT) {
+        // 우클릭
+        setLineWidth(LINE_WIDTH.THICK);
+      } else {
+        // 좌클릭
+        setLineWidth(LINE_WIDTH.THIN);
+      }
+      startDrawing(e);
+    },
+    [startDrawing]
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -88,73 +141,35 @@ export const useCanvas = () => {
     };
   }, [canvasRef, handleMouseDown, handleContextMenu]);
 
-  const addKeyboardEvent = () => {
-    // TODO: 단축키로 누르면 undoStack 길이가 0으로 고정되는 버그 수정
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
-        undo();
-      }
-    };
+  const draw = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>): void => {
+      if (!isDrawing || !context) return;
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  };
+      const { offsetX, offsetY } = e.nativeEvent;
+      context.lineTo(offsetX, offsetY);
+      context.stroke();
+    },
+    [isDrawing, context]
+  );
 
-  const startDrawing = (e: MouseEvent): void => {
-    if (!context || !canvasRef.current) return;
+  const toggleMode = useCallback(() => {
+    setDrawingMode((prev) => (prev === MODE.DRAW ? MODE.ERASE : MODE.DRAW));
+  }, [setDrawingMode]);
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    context.beginPath();
-    context.moveTo(offsetX, offsetY);
-    setIsDrawing(true);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>): void => {
-    if (!isDrawing || !context) return;
-
-    const { offsetX, offsetY } = e.nativeEvent;
-    context.lineTo(offsetX, offsetY);
-    context.stroke();
-  };
-
-  const toggleMode = () => {
-    setDrawingMode((prev) => (prev === "draw" ? "erase" : "draw"));
-  };
-
-  const getFileName = () => {
-    const date = new Date();
-    return `drawing-${date.getFullYear()}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}-${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}${date.getMinutes().toString().padStart(2, "0")}${date
-      .getSeconds()
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const saveImage = () => {
+  const saveImage = useCallback(() => {
     if (!canvasRef.current) return;
     canvasRef.current.toBlob((blob) => {
       if (!blob) return;
-      const link = document.createElement("a");
-      const fileName = getFileName();
-      link.download = `${fileName}.png`;
-      link.href = URL.createObjectURL(blob);
-      link.click();
+      downloadImageAsBlob(blob, getFileName());
     });
-  };
+  }, [canvasRef]);
 
-  const clearCanvas = () => {
+  const clearCanvas = useCallback(() => {
     if (!context || !canvasRef.current) return;
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  };
+  }, [context, canvasRef]);
 
-  const saveState = () => {
+  const saveState = useCallback(() => {
     if (!canvasRef.current || !isDrawing) return;
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
@@ -166,41 +181,23 @@ export const useCanvas = () => {
       canvasRef.current.height
     );
     setUndoStack((prev) => [...prev, imageData]);
-  };
+  }, [canvasRef, isDrawing]);
 
-  const undo = () => {
-    if (!canvasRef.current || undoStack.length === 0) return;
-    const ctx = canvasRef.current.getContext("2d");
-    if (!ctx) return;
-
-    const newStack = [...undoStack];
-    newStack.pop();
-    const lastState = newStack[newStack.length - 1];
-
-    if (lastState) {
-      ctx.putImageData(lastState, 0, 0);
-      setUndoStack(newStack);
-    } else {
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      setUndoStack([]);
-    }
-  };
-
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (isDrawing) {
       saveState();
     }
     setIsDrawing(false);
     setLineWidth(LINE_WIDTH.THIN);
-  };
+  }, [isDrawing, saveState]);
 
   return {
     canvasRef,
     currentColor,
+    setCurrentColor,
     drawingMode,
     startDrawing,
     draw,
-    setCurrentColor,
     toggleMode,
     saveImage,
     clearCanvas,

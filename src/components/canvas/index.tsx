@@ -6,12 +6,12 @@ import CanvasBottomText from "./canvas-bottom-text";
 import { useAi } from "@/hooks/useAi";
 import CanvasTopText from "./canvas-top-text";
 
-interface CanvasProps {
+type CanvasProps = {
   width?: number;
   height?: number;
-}
+};
 
-const Canvas: React.FC<CanvasProps> = ({ width = 1080, height = 720 }) => {
+const Canvas = ({ width = 1080, height = 720 }: CanvasProps) => {
   const {
     canvasRef,
     currentColor,

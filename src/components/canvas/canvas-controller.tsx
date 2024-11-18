@@ -1,19 +1,29 @@
-import React from "react";
-import { COLORS } from "@/hooks/useCanvas";
+import React, { memo } from "react";
+import { COLORS, DrawingMode, MODE } from "@/hooks/useCanvas";
 
-interface ColorButtonProps {
+type ColorButtonProps = {
   color: string;
   isSelected: boolean;
   onClick: () => void;
   disabled?: boolean;
-}
+};
 
-const ColorButton: React.FC<ColorButtonProps> = ({
+type CanvasControllerProps = {
+  currentColor: string;
+  setCurrentColor: (color: string) => void;
+  drawingMode: DrawingMode;
+  toggleMode: () => void;
+  saveImage: () => void;
+  clearCanvas: () => void;
+  undo: () => void;
+};
+
+const ColorButton = ({
   color,
   isSelected,
   onClick,
   disabled,
-}) => (
+}: ColorButtonProps) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -27,25 +37,15 @@ const ColorButton: React.FC<ColorButtonProps> = ({
   />
 );
 
-interface CanvasControllerProps {
-  currentColor: string;
-  drawingMode: "draw" | "erase";
-  setCurrentColor: (color: string) => void;
-  toggleMode: () => void;
-  saveImage: () => void;
-  clearCanvas: () => void;
-  undo: () => void;
-}
-
-const CanvasController: React.FC<CanvasControllerProps> = ({
+function CanvasController({
   currentColor,
-  drawingMode,
   setCurrentColor,
+  drawingMode,
   toggleMode,
   saveImage,
   clearCanvas,
   undo,
-}) => {
+}: CanvasControllerProps) {
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
               color={color}
               isSelected={currentColor === color}
               onClick={() => setCurrentColor(color)}
-              disabled={drawingMode === "erase"}
+              disabled={drawingMode === MODE.ERASE}
             />
           ))}
         </div>
@@ -68,13 +68,13 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
         className={`
           px-4 py-2 rounded-md text-white transition-colors
           ${
-            drawingMode === "erase"
+            drawingMode === MODE.ERASE
               ? "bg-red-500 hover:bg-red-600"
               : "bg-blue-500 hover:bg-blue-600"
           }
         `}
       >
-        {drawingMode === "draw" ? "지우개 모드" : "그리기 모드"}
+        {drawingMode === MODE.DRAW ? "지우개 모드" : "그리기 모드"}
       </button>
 
       <button
@@ -99,5 +99,5 @@ const CanvasController: React.FC<CanvasControllerProps> = ({
       </button>
     </div>
   );
-};
-export default CanvasController;
+}
+export default memo(CanvasController);

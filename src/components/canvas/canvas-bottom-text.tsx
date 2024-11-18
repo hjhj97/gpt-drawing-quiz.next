@@ -1,20 +1,22 @@
 import { useGoogleSession } from "@/context/google-session-context";
 import Image from "next/image";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function CanvasBottomText({
-  message,
-  isMessageLoading,
-  sendPost,
-  sendImage,
-}: {
+type CanvasBottomTextProps = {
   message: string;
   isMessageLoading: boolean;
   sendPost: () => Promise<void>;
   sendImage: () => Promise<void>;
-}) {
+};
+
+function CanvasBottomText({
+  message,
+  isMessageLoading,
+  sendPost,
+  sendImage,
+}: CanvasBottomTextProps) {
   const [isSending, setIsSending] = useState<boolean>(false);
   const { session } = useGoogleSession();
 
@@ -93,3 +95,5 @@ function GptAnswer({
     </div>
   ) : null;
 }
+
+export default memo(CanvasBottomText);
