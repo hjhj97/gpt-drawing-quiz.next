@@ -19,7 +19,19 @@ export const sendMessage = async (imageData: string) => {
         content: [
           {
             type: "text",
-            text: "What’s in this image? Please summarize it within 30 characters",
+            text: "What’s in this image? Follow the rules below",
+          },
+          {
+            type: "text",
+            text: "1. Please summarize it within 30 characters",
+          },
+          {
+            type: "text",
+            text: "2. Do not use plurals, only use singular",
+          },
+          {
+            type: "text",
+            text: "3. Do not use periods or commas",
           },
           {
             type: "image_url",

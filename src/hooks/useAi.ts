@@ -1,4 +1,4 @@
-import { sendMessage } from "@/app/actions/openai";
+import { sendMessage } from "@/app/actions/openai/query-image";
 import { createPost } from "@/app/actions/post";
 import { getRandomWord } from "@/app/actions/words";
 import { getBase64Image } from "@/utils/file";
