@@ -6,8 +6,8 @@ export const generateImage = async (prompt: string) => {
   const response = await client.images.generate({
     prompt,
     n: 1,
-    size: "256x256",
-    model: "dall-e-2",
+    size: "1024x1024",
+    model: "dall-e-3",
   });
   const imageUrl = response.data[0].url;
 

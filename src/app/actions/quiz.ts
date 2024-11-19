@@ -2,6 +2,7 @@
 import { IQuiz } from "@/types/quiz";
 import { generateImage } from "./openai/generate-image";
 import { createClient } from "@/utils/supabase/server";
+import { SENTENCES } from "@/constant/random-sentence";
 
 export const getAllQuizs = async (): Promise<IQuiz[] | null> => {
   const client = await createClient();
@@ -12,7 +13,7 @@ export const getAllQuizs = async (): Promise<IQuiz[] | null> => {
 
 export const createQuiz = async () => {
   const client = await createClient();
-  const answer = "cat";
+  const answer = await getRandomSentence();
   const imageUrl = await generateImage(answer);
 
   const { data, error } = await client.from("quizs").insert({
@@ -21,4 +22,8 @@ export const createQuiz = async () => {
   });
   if (error) throw new Error(error.message);
   return data;
+};
+
+export const getRandomSentence = async () => {
+  return SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
 };
