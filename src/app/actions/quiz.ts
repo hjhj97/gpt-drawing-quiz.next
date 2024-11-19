@@ -1,8 +1,10 @@
 "use server";
+
 import { IQuiz } from "@/types/quiz";
 import { generateImage } from "./openai/generate-image";
 import { createClient } from "@/utils/supabase/server";
 import { SENTENCES } from "@/constant/random-sentence";
+import PhraseGen from "korean-random-words";
 
 export const getAllQuizs = async (): Promise<IQuiz[] | null> => {
   const client = await createClient();
@@ -13,11 +15,14 @@ export const getAllQuizs = async (): Promise<IQuiz[] | null> => {
 
 export const createQuiz = async () => {
   const client = await createClient();
-  const answer = await getRandomSentence();
-  const imageUrl = await generateImage(answer);
+  const phraseGen = new PhraseGen();
+  const phrase = phraseGen.generatePhrase();
+  console.log(phrase);
+
+  const imageUrl = await generateImage(phrase);
 
   const { data, error } = await client.from("quizs").insert({
-    answer,
+    answer: phrase,
     image_url: imageUrl,
   });
   if (error) throw new Error(error.message);
