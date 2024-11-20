@@ -9,10 +9,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="w-full h-full pt-8 bg-blue-400">
+      <body className="w-full h-full bg-blue-400">
         <GoogleSessionProvider>
           <GNB />
-          {children}
+          <div className="mt-16">{children}</div>
         </GoogleSessionProvider>
       </body>
     </html>
