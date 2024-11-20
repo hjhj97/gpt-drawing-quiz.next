@@ -13,6 +13,20 @@ export const getAllQuizs = async (): Promise<IQuiz[] | null> => {
   return data;
 };
 
+export const getQuizById = async (id: string): Promise<IQuiz | null> => {
+  const client = await createClient();
+  const { data, error } = await client.from("quizs").select("*").eq("id", id);
+  if (error) throw new Error(error.message);
+  return data[0];
+};
+
+export const checkAnswer = async (id: string, answer: string) => {
+  const client = await createClient();
+  const { data, error } = await client.from("quizs").select("*").eq("id", id);
+  if (error) throw new Error(error.message);
+  return data[0].answer === answer;
+};
+
 export const createQuiz = async () => {
   const client = await createClient();
   const phraseGen = new PhraseGen();

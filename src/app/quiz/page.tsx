@@ -1,4 +1,4 @@
-import QuizList from "@/components/quiz/quiz-list";
+import QuizList from "@/components/quiz/card-list";
 import QuizController from "@/components/quiz/quiz-controller";
 
 export default function Quiz() {
