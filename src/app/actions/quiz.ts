@@ -31,7 +31,6 @@ export const createQuiz = async () => {
   const client = await createClient();
   const phraseGen = new PhraseGen();
   const phrase = phraseGen.generatePhrase();
-  console.log(phrase);
 
   const imageUrl = await generateImage(phrase);
 

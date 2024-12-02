@@ -12,7 +12,7 @@ export default function RootLayout({
       <body className="w-full h-full bg-blue-400">
         <GoogleSessionProvider>
           <GNB />
-          <div className="mt-16">{children}</div>
+          {children}
         </GoogleSessionProvider>
       </body>
     </html>

@@ -10,7 +10,6 @@ export default async function Post({ params }: any) {
     <div className="flex flex-col mt-16 items-center justify-center">
       <div className="flex justify-between ">
         <p className="text-2xl font-bold">제시어 : {post.answer}</p>
-        {/*<p>{post.created_at}</p>*/}
       </div>
       <div className="relative mt-4 w-[1000px] h-[720px] bg-white rounded-lg">
         <Image src={post.image_url} alt="post" width={1080} height={720} />
